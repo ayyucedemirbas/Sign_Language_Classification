@@ -1,46 +1,44 @@
 # Sign_Language_Classification
 
 
-We build and train a classifier model on [ASL_Alphabet Dataset](https://www.kaggle.com/datasets/grassknoted/asl-alphabet) from scratch. However, it takes a lot of time. Thus, we fine-tune ResNet50 model which pretrained on imagenet. We simply freeze all the layers except the last four layers and train those four layers instead of training the whole model.
+We build and train a classifier model on [ASL_Alphabet Dataset](https://www.kaggle.com/datasets/grassknoted/asl-alphabet). We get 0.99333 accuracy on the validation set.
+
+The  model looks like this:
+
+![image](https://user-images.githubusercontent.com/8023150/200340698-2791645e-cfd7-4fc8-9dde-e8841b74c83c.png)
 
 
-The first model looks like this:
-
-    inputs= keras.Input(shape=(224,224,3))
-    x = data_augmentation(inputs)
-    x = layers.experimental.preprocessing.Rescaling(1./255)(x)
+    inputs= keras.Input(shape=(100,100,3))
+    #x = data_augmentation(inputs)
+    x = layers.experimental.preprocessing.Rescaling(1./255)(inputs)
 
 
-    #Block: 1
-    x = Conv2D(256, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
+    x = SeparableConv2D(64, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
     residual = x
-    x = Conv2D(256, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
+    x = SeparableConv2D(64, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
     x = MaxPooling2D(pool_size=(2, 2), padding = 'same')(x)
-    residual = Conv2D(256,1, strides=2)(residual)
+    residual = Conv2D(64,1, strides=2)(residual)
     x = layers.add([x, residual])
     x = Dropout(0.3)(x)
-    x = Conv2D(128, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
-    x = Conv2D(128, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
+    x = SeparableConv2D(32, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
+    residual = x
+    x = SeparableConv2D(32, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
     x = MaxPooling2D(pool_size=(2, 2))(x)
+    residual = Conv2D(32,1, strides=2)(residual)
+    x = layers.add([x, residual])
     x = Dropout(0.3)(x)
-
-
-    #Block: 2
-    x = Conv2D(64, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
-    x = Conv2D(64, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
-    x = MaxPooling2D(pool_size=(2, 2))(x)
-    x = Dropout(0.3)(x)
-    x = Conv2D(32, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
-    x = Conv2D(32, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
-    x = MaxPooling2D(pool_size=(2, 2))(x)
-    x = Dropout(0.3)(x)
-
 
     x = Flatten(name='flatten')(x)
     x = Dense(units=32, activation='relu')(x)
     outputs = Dense(units=29, activation='softmax')(x)
     model= keras.Model(inputs=inputs, outputs=outputs)
+    
+<img width="386" alt="image" src="https://user-images.githubusercontent.com/8023150/200340107-c0f50229-3b58-469a-8021-cdf7edbdf729.png">
+<img width="386" alt="image" src="https://user-images.githubusercontent.com/8023150/200340207-f0727382-520e-4791-8583-67d88ca92a6e.png">
 
+
+
+We also fine-tune ResNet50 model which pretrained on imagenet. We simply freeze all the layers except the last four layers and train those four layers instead of training the whole model.
 
 We get the pretrained ResNet50 model, and build our model as follows:
 
@@ -64,11 +62,3 @@ We get the pretrained ResNet50 model, and build our model as follows:
     outputs = Dense(units=29, activation='softmax')(x)
     model= keras.Model(inputs=inputs, outputs=outputs)
   
-Since we train only four layers, the training doesn't take as much time as the one above.
-
-The model is obviously underfitted. But I don't have enough time or patience to fit it.
-
-<img width="386" alt="image" src="https://user-images.githubusercontent.com/8023150/200228299-0c7c913f-ac8e-4d0d-b694-64ba32151b3d.png">
-
-<img width="386" alt="image" src="https://user-images.githubusercontent.com/8023150/200228464-b8a42762-bc87-4e64-bbac-45e842f7a5db.png">
-
