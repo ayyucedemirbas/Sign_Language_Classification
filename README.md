@@ -65,3 +65,10 @@ We get the pretrained ResNet50 model, and build our model as follows:
     model= keras.Model(inputs=inputs, outputs=outputs)
   
 Since we train only four layers, the training doesn't take as much time as the one above.
+
+The model is obviously underfitted. But I don't have enough time or patience to fit it.
+
+<img width="386" alt="image" src="https://user-images.githubusercontent.com/8023150/200228299-0c7c913f-ac8e-4d0d-b694-64ba32151b3d.png">
+
+<img width="386" alt="image" src="https://user-images.githubusercontent.com/8023150/200228464-b8a42762-bc87-4e64-bbac-45e842f7a5db.png">
+
