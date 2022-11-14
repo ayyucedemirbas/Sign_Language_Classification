@@ -5,15 +5,15 @@ We build and train a classifier model on [ASL_Alphabet Dataset](https://www.kagg
 
 The  model looks like this:
 
-![image](https://user-images.githubusercontent.com/8023150/200340698-2791645e-cfd7-4fc8-9dde-e8841b74c83c.png)
-
+![image](https://user-images.githubusercontent.com/8023150/201570312-858d3fce-1f31-4657-bfa1-98bbf229ac01.png)
 
     inputs= keras.Input(shape=(100,100,3))
     #x = data_augmentation(inputs)
     x = layers.experimental.preprocessing.Rescaling(1./255)(inputs)
 
 
-    x = SeparableConv2D(64, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
+    #Block: 1
+    x = Conv2D(64, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
     residual = x
     x = SeparableConv2D(64, kernel_size=(3, 3), activation='relu',padding='SAME')(x)
     x = MaxPooling2D(pool_size=(2, 2), padding = 'same')(x)
